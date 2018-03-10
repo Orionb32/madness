@@ -2,7 +2,7 @@ import urllib2
 from bs4 import BeautifulSoup
 import numpy as np
 import matplotlib.pyplot as plt 
-
+import time
 def scraper(day, month, year):
 
 	home=[]
@@ -10,15 +10,17 @@ def scraper(day, month, year):
 	for y in year:
 		for m in month:
 			for d in  day:
-				cbballref = "https://www.sports-reference.com/cbb/boxscores/index.cgi?month="+str(month)+"&day="+str(day)+"&year=2017"
+				cbballref = "https://www.sports-reference.com/cbb/boxscores/index.cgi?month="+str(m)+"&day="+str(d)+"&year="+str(y)
 				page=urllib2.urlopen(cbballref)
 				soup = BeautifulSoup(page, "html.parser")
 				box= soup.find_all('table', class_='teams')
-				print "day: " +str(day) + "   month: " + str(month) +"length of box: "+ str(len(box)) 
+				print "day: " +str(d) + "\tmonth: " + str(m) +"\tlength of box: "+ str(len(box)) 
 				for row in  box:
 					cells = row.findAll('td',class_="right")
 					road.append(str(cells[0].find(text=True)))
 					home.append(str(cells[2].find(text=True)))
+				time.sleep(1)
+				box=None
 	intensity = [
 		[0,0,0,0,0,0,0,0,0,0],	
 		[0,0,0,0,0,0,0,0,0,0],	
@@ -62,7 +64,7 @@ def heatmap(intensiy, home, road):
 #	plt.show()
 
 def main():
-	intensity, home, road = scraper([16-20],[3],[2017])
+	intensity, home, road = scraper(range(1,20),[3],[2017])
 	heatmap(intensity, home, road)
 	
 #get request year, day month
